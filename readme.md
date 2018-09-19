@@ -48,18 +48,48 @@ print buffer
 
 The `strbuffer` rock can be found [here](//github.com/darkwiiplayer/lua_strbuffer).
 
-Syntax
+Usage
 -----
 
 TODO: Write :P
 
 ### Special functions
 
+#### `print`
+
+`print` can be used within moonxml function to insert raw text to the output IO.
+
+The text that is output is not escaped and could result in invalid documents.
+See also `escape`.
+
+Example:
+
+```moon
+render ->
+	print "this<br/>is</br>multiline"
+```
+
+Will print:
+
+```html
+this<br/>is<br/>multiline
+```
+
+#### `escape`
+
+Escapes special characters to HTML sequences.
+
 #### `html5`
 
 `html5` adds a HTML5 DOCTYPE to the document when called.
 
----
+### Defining new tags
+
+```moon
+with moonxml.environment.xml
+	.xml = ->
+		.print "<?xml version=\"1.0\"?>\n"
+```
 
 TODO: Write :P
 
