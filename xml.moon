@@ -1,3 +1,5 @@
+is51 = _VERSION == 'Lua 5.1'
+
 void = {key,true for key in *{
 	"area", "base", "br", "col"
 	"command", "embed", "hr", "img"
@@ -13,15 +15,18 @@ escapes = {
 	["'"]: '&#039;'
 }
 
+global = _ENV or _G
 env = (make_tag) ->
-	environment = setmetatable {}, {
-		__index: (key) =>
-			(_ENV or _G)[key] or (...) ->
-				@.tag(key, ...)
-	}
+	environment = do
+		setmetatable {}, {
+			__index: (key) =>
+				global[key] or (...) ->
+					@.tag(key, ...)
+		}
 
-	_G   = environment -- Local, doesn't override global _G in 5.2+
-	_ENV = environment -- Local, doesn't affect outside world anyway
+	if is51
+		setfenv(1, environment)
+	_ENV = _ENV and environment
 
 	export escape = (value) ->
 		(=>@) tostring(value)\gsub [[[<>&]'"]], escapes
@@ -52,7 +57,7 @@ env = (make_tag) ->
 
 	return environment
 
-make = if _VERSION == 'Lua 5.1' then
+make = if is51 then
   (environment) ->
     (fnc) ->
       assert(type(fnc)=='function', 'wrong argument to render, expecting function')
@@ -111,6 +116,7 @@ environment = {
 }
 environment.html.html5 = ->
 	environment.html.print '<!doctype html5>'
+
 
 {
 	:environment

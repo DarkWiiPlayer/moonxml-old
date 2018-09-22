@@ -1,3 +1,4 @@
+local is51 = _VERSION == 'Lua 5.1'
 local void
 do
   local _tbl_0 = { }
@@ -32,17 +33,23 @@ local escapes = {
   ['"'] = '&quot;',
   ["'"] = '&#039;'
 }
+local global = _ENV or _G
 local env
 env = function(make_tag)
-  local environment = setmetatable({ }, {
-    __index = function(self, key)
-      return (_ENV or _G)[key] or function(...)
-        return self.tag(key, ...)
+  local environment
+  do
+    environment = setmetatable({ }, {
+      __index = function(self, key)
+        return global[key] or function(...)
+          return self.tag(key, ...)
+        end
       end
-    end
-  })
-  local _G = environment
-  local _ENV = environment
+    })
+  end
+  if is51 then
+    setfenv(1, environment)
+  end
+  local _ENV = _ENV and environment
   escape = function(value)
     return (function(self)
       return self
@@ -87,7 +94,7 @@ env = function(make_tag)
   return environment
 end
 local make
-if _VERSION == 'Lua 5.1' then
+if is51 then
   make = function(environment)
     return function(fnc)
       assert(type(fnc) == 'function', 'wrong argument to render, expecting function')
