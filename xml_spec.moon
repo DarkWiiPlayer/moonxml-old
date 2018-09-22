@@ -1,21 +1,18 @@
-s_buf = require"strbuffer"
-package.path = '?.lua'
 moonxml = require 'xml'
 
 xml = (fn, ...) ->
-	buf = s_buf!
-	moonxml.xml(fn)(buf\append, ...)
-	return tostring(buf)
+	buf = {}
+	append = (val) -> table.insert(buf, val)
+	moonxml.xml(fn)(append, ...)
+	return table.concat(buf)
 
 html = (fn, ...) ->
-	buf = s_buf!
-	moonxml.html(fn)(buf\append, ...)
-	return tostring(buf)
+	buf = {}
+	append = (val) -> table.insert(buf, val)
+	moonxml.html(fn)(append, ...)
+	return table.concat(buf)
 
 describe "moonxml xml", ->
-	it "should work", ->
-		assert.is_string xml -> a_thing!
-
 	describe "tags", ->
 		it "should not have closing tags when empty", ->
 			assert.equal '<t />', xml -> t!
@@ -45,6 +42,6 @@ describe "moonxml html", ->
 			assert.equal '<span></span>', html -> span!
 			assert.equal '<span>test</span>', html -> span 'test'
 
-test "additional arguments should get passed", ->
+describe "additional arguments should get passed", ->
 	assert.equal '<text>string</text>', xml ((t)->text (type t)), 'test'
 	assert.equal '<span>string</span>', html ((t)->span (type t)), 'test'
