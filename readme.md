@@ -1,61 +1,129 @@
-Version 2.0 is here!
---------------------
 
-While there is no official release yet, there won't be any feature changes until 2.0, and it will be released as soon as it has seen some more testing :)
-
-See changelog to find out what changed (Spoiler: MoonHTML is no more)
 
 MoonXML
 ========
 
-A while ago I wrote a copy of the [lapis](//leafo.net/lapis/) HTML generator syntax, but since that wasn't really suited for writing XML, I made a modified version for that. Since the two projects shared almost all their code, I decided to merge them together into one library that does both HTML and XML generation. The only real difference is how empty tags are handled.
+MoonXML is a library that allows using MoonScript as a DSL to generate XML or HTML.
+It works in a similar fashion to the Lapis builder syntax.
 
-A quick example:
+Here’s a quick example:
 
-	render = (out, fnc) -> require'moonxml'.xml(fnc)(out)
-	render print, ->
-		svg ->
-			rect x: 5, y: 5, width: 90, height: 90
+```moon
+moonxml = require "moonxml"
 
-should generate the following code
+render = (f) -> moonxml.xml(f) io.write
 
-	<svg>
-	<rect y="5" x="5" width="90" height="90" />
-	</svg>
+render ->
+	svg ->
+		rect x: 5, y: 5, width: 90, height: 90
+```
 
-and could also be written as
+Which should generate the following code:
 
-	buffer = require'strbuffer'('\n')
-	render = (fnc) -> require'moonxml'.xml(fnc)(buffer\append)
-	render ->
-		svg ->
-			rect
-				x: 5
-				y: 5
-				width: 90
-				height: 90
-	print buffer
+```xml
+<svg>
+<rect y="5" x="5" width="90" height="90"/>
+</svg>
+```
 
-The `strbuffer` rock can be found [here](//github.com/darkwiiplayer/lua_strbuffer)
+Using the `strbuffer` rock
+-----
+
+The following code produces the same output as above, but uses the `strbuffer` rock to store the generated content before printing it.
+
+```moon
+buffer = require("strbuffer")('\n')
+moonxml = require "moonxml"
+
+render = (fnc) -> moonxml.xml(fnc)(buffer\append)
+
+render ->
+	svg ->
+		rect
+			x: 5
+			y: 5
+			width: 90
+			height: 90
+print buffer
+```
+
+The `strbuffer` rock can be found [here](//github.com/darkwiiplayer/lua_strbuffer).
 
 Usage
-------
+-----
+
+TODO: Write :P
+
+### Special functions
+
+#### `print`
+
+`print` can be used within moonxml function to add raw text to the output IO.
+
+The text that is output is not escaped and could result in invalid documents.
+See also `escape`.
+
+What's more, print is actually the function passed to the template when using it, so it may do all kinds of things, like adding its arguments to a buffer or even sending them to a client.
+A more precise way to think of it may be that it adds its argument to the output stream, whatever that may be.
+
+Example:
+
+```moon
+render ->
+	print "this<br/>is</br>multiline"
+```
+
+Will print:
+
+```html
+this<br/>is<br/>multiline
+```
+
+#### `escape`
+
+Escapes special characters to HTML sequences.
+
+Examples:
+
+`escape '<html>'` produces `&lt;html&gt;`
+
+`escape '3 < 42'` produces `3 &lt; 42`
+
+#### `html5`
+
+`html5` adds a HTML5 DOCTYPE to the document when called.
+Be careful to always call it at the beginning of the document, as the DOCTYPE is added where `html5` is called!
+
+### Defining new tags
+
+```moon
+with moonxml.environment.xml
+	.xml = ->
+		.print "<?xml version=\"1.0\"?>\n"
+```
 
 TODO: Write :P
 
 Warning(s)
 -----
 
-Because of how lua works, once a function is passed into `render` or `build`, its upvalues are permanently changed. This means functions may become otherwise unusable, and shouldn't be used for more than one template at the same time. Seriously, things might explode and kittens may die.
-It also seems like in lua 5.2+ the environment isn't necessarily the first upvalue (?) so things break if any upvalue is accessed before any global. This will be less of a problem once a proper way to load entire files in the builder environment exists.
+Because of how lua works, once a function is passed into `render` or `build`, its upvalues are permanently changed.
+This means functions may become otherwise unusable, and shouldn't be used for more than one template at the same time.
+Seriously, things might explode and kittens may die.
+
+It also seems like in lua 5.2+ the environment isn't necessarily the first upvalue (?) so things break if any upvalue is accessed before any global.
+This will be less of a problem once a proper way to load entire files in the builder environment exists.
 
 Compatibility with Lapis
 -----
 
-Not really an issue. This is *not* a 1:1 clone of the lapis generator syntax, but an attempt at recreating it in my own way. Many things may work the same way and simpler code snippets may work in either of the two, but more complex constructs may require some adaptation. The fact that MoonHTML flattens its arguments also means that you can do a lot more "weird stuff" with it that just wouldn't work in lapis, so be aware of that.
+MoonXML is **NOT** a clone of the Lapis generator syntax.
+Although most short snippets will work, more complex constructs may require some adaptation.
+
+MoonXML flattening its arguments also means that you can do a lot more "weird stuff" with it that just wouldn't work in lapis, so be aware of that.
 
 FengariXML
---------
+-----
 
 I'm not sure if this should be its own project or not, but all of this code can easily be ported to generate HTML nodes directly in the browser using [Fengari](//github.com/fengari-lua/fengari), and I will probably build something like that sooner or later.
 
@@ -75,5 +143,8 @@ Changelog
 - build now returns a function, which in turn accepts as its first argument a function that handles output. All aditional arguments are passed to the function provided by the user
 
 Note that I initially intended to use this mainly inside [Vim](//vim.sourceforge.io/), where I have a macro set up to feed the visual selection through the moonscript interpreter and replace it with its output. It has also grown to the point where it can perfectly be used within a web server like openresty or pegasus, or in other more high-level code like my [multitone](//github.com/darkwiiplayer/multitone) function. I can also imagine a document markup DSL with some aditional abstractions (like using `title` instead of `h1`..`h6`, etc.)
+
+License
+-----
 
 License: [The Unlicense](//unlicense.org)
