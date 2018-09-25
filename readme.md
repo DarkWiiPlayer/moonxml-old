@@ -4,6 +4,7 @@ MoonXML
 ========
 
 MoonXML is a library that allows using MoonScript as a DSL to generate XML or HTML.
+It works in a similar fashion to the Lapis builder syntax.
 
 Here’s a quick example:
 
@@ -57,10 +58,13 @@ TODO: Write :P
 
 #### `print`
 
-`print` can be used within moonxml function to insert raw text to the output IO.
+`print` can be used within moonxml function to add raw text to the output IO.
 
 The text that is output is not escaped and could result in invalid documents.
 See also `escape`.
+
+What's more, print is actually the function passed to the template when using it, so it may do all kinds of things, like adding its arguments to a buffer or even sending them to a client.
+A more precise way to think of it may be that it adds its argument to the output stream, whatever that may be.
 
 Example:
 
@@ -79,9 +83,16 @@ this<br/>is<br/>multiline
 
 Escapes special characters to HTML sequences.
 
+Examples:
+
+`escape '<html>'` produces `&lt;html&gt;`
+
+`escape '3 < 42'` produces `3 &lt; 42`
+
 #### `html5`
 
 `html5` adds a HTML5 DOCTYPE to the document when called.
+Be careful to always call it at the beginning of the document, as the DOCTYPE is added where `html5` is called!
 
 ### Defining new tags
 
