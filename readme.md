@@ -1,10 +1,3 @@
-Version 2.0 is here!
---------------------
-
-While there is no official release yet, there won't be any feature changes until 2.0, and it will be released as soon as it has seen some more testing :)
-
-See changelog to find out what changed (Spoiler: MoonHTML is no more)
-
 MoonXML
 ========
 
