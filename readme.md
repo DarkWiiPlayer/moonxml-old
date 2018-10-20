@@ -10,8 +10,8 @@ project that just makes use of those core functionalities. The two projects also
 For the sake of completeness (And to satisfy my nothing can be lost OCD) this project will remain on github
 but will be frozen and renamed to moonxml-old. The new projects can be found at:
 
-- github.com/darkwiiplayer/moonxml
-- github.com/darkwiiplayer/xhmoon
+- http://github.com/darkwiiplayer/moonxml
+- http://github.com/darkwiiplayer/xhmoon
 
 -------------
 
