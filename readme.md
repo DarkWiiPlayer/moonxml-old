@@ -1,3 +1,22 @@
+Moved
+=======
+
+With work on moonxml going more and more in the direction of separating out the language-independant aspects
+of the syntax, it has started to become clear that this is really a completely separate component of the
+library that could be used for much more than XML and HTML. Thus, the decision has been made to separate
+it into its own project, called XHMoon (XML / HTML Helper for Moonscript) and MoonXML is now a much simpler
+project that just makes use of those core functionalities. The two projects also have independant rocks now.
+
+For the sake of completeness (And to satisfy my nothing can be lost OCD) this project will remain on github
+but will be frozen and renamed to moonxml-old. The new projects can be found at:
+
+- github.com/darkwiiplayer/moonxml
+- github.com/darkwiiplayer/xhmoon
+
+-------------
+
+Original Readme:
+
 MoonXML
 ========
 
